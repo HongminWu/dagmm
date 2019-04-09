@@ -4,6 +4,7 @@ from solver import Solver
 from data_loader import get_loader
 from torch.backends import cudnn
 from utils import *
+import ipdb
 
 def str2bool(v):
     return v.lower() in ('true')
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     parser.add_argument('--pretrained_model', type=str, default=None)
 
     # Misc
-    parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
+    parser.add_argument('--mode', type=str, default='test', choices=['train', 'test'])
     parser.add_argument('--use_tensorboard', type=str2bool, default=True)
 
     # Path
