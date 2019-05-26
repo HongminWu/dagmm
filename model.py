@@ -170,3 +170,15 @@ class DaGMM(nn.Module):
         loss = recon_error + lambda_energy * sample_energy + lambda_cov_diag * cov_diag
 
         return loss, sample_energy, recon_error, cov_diag
+    
+if __name__=="__main__":
+    '''
+    import ipdb
+    from torchviz import make_dot    
+    gmm_k = 4
+    dagmm = DaGMM(gmm_k)
+    x = torch.randn(118,60)
+    model = dagmm.encoder
+    graph = make_dot(model(x), params=dict(model.named_parameters()))
+    graph.view()
+    '''

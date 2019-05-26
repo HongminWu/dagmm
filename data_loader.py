@@ -12,11 +12,11 @@ import collections
 import numbers
 import math
 import pandas as pd
+import ipdb
 class KDD99Loader(object):
     def __init__(self, data_path, mode="train"):
         self.mode=mode
         data = np.load(data_path)
-
         labels = data["kdd"][:,-1]
         features = data["kdd"][:,:-1]
         N, D = features.shape
@@ -66,7 +66,7 @@ def get_loader(data_path, batch_size, mode='train'):
     """Build and return data loader."""
 
     dataset = KDD99Loader(data_path, mode)
-
+    
     shuffle = False
     if mode == 'train':
         shuffle = True
