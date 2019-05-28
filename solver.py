@@ -33,7 +33,15 @@ class Solver(object):
 
     def build_model(self):
         # Define model
-        self.dagmm = DaGMM(self.gmm_k)
+        if 'kdd' in self.data_path.lower():        
+            self.dagmm = DaGMM(self.gmm_k)
+        elif 'kitting' in self.data_path.lower():
+            features = self.data_loader.dataset.train.shape[-1] 
+            self.dagmm = GMM_VAE(self.gmm_k)           
+            pass
+        else:
+            raise ("haven't bulid model for this dataset: %s" %self.data_path)
+            
 
         # Optimizers
         self.optimizer = torch.optim.Adam(self.dagmm.parameters(), lr=self.lr)

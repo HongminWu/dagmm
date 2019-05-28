@@ -32,8 +32,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
 
-    # for parameters for kitting experiment
-#    python main.py --batch_size 128 --mode train --data_path  
+    # parameters for training/testing the data of kitting experiment
+#    python main.py --batch_size 128 --mode train --data_path kitting_exp_skill_3.npy
+#    python main.py --batch_size 128 --mode test  --data_path kitting_exp_skill_3.npy  
     
     
     # Model hyper-parameters

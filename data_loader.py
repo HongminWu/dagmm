@@ -21,7 +21,6 @@ class KDD99Loader(object):
         labels = data["kdd"][:,-1]
         features = data["kdd"][:,:-1]
         N, D = features.shape 
-
         normal_data = features[labels==1] # normal is lablled as 1 
         normal_labels = labels[labels==1]
 
@@ -72,7 +71,6 @@ class KittingExperimentLoader(object):
         labels = data[:,-1]
         features = data[:,:-1]
         N, D = features.shape 
-        ipdb.set_trace()
         normal_data = features[labels==1] # normal is lablled as 1 
         normal_labels = labels[labels==1]
 
@@ -94,6 +92,11 @@ class KittingExperimentLoader(object):
         self.test = np.concatenate((self.test, anomaly_data),axis=0) # concatenate the normal and anomaly as consequent testing data
         self.test_labels = np.concatenate((self.test_labels, anomaly_labels),axis=0)
 
+        print 
+        print("shape of train:{}, shape of test:{}".format(self.train.shape, self.test.shape))
+        print 
+        input("Press ENTER to continue!")
+        
 
     def __len__(self):
         """

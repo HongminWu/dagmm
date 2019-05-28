@@ -170,14 +170,53 @@ class DaGMM(nn.Module):
         loss = recon_error + lambda_energy * sample_energy + lambda_cov_diag * cov_diag
 
         return loss, sample_energy, recon_error, cov_diag
+
+class GMM_VAE(DaGMM):
+    """Residual Block."""
+    def __init__(self, n_gmm = 2, latent_dim=3):
+        super(GMM_VAE, self).__init__()
+
+        # D=18
+        layers = []
+        layers += [nn.Linear(18, 12)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Linear(12, 8)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Linear(8, 4)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Linear(4, 1)]
+        self.encoder = nn.Sequential(*layers)
+
+        layers = []
+        layers += [nn.Linear(1,4)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Linear(4,8)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Linear(8, 12)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Linear(12, 18)]
+        self.decoder = nn.Sequential(*layers)
+
+        layers = []
+        layers += [nn.Linear(latent_dim, 4)]
+        layers += [nn.Tanh()]        
+        layers += [nn.Dropout(p=0.5)]        
+        layers += [nn.Linear(4, n_gmm)]
+        layers += [nn.Softmax(dim=1)]
+        self.estimation = nn.Sequential(*layers)
+
+        self.register_buffer("phi", torch.zeros(n_gmm))
+        self.register_buffer("mu", torch.zeros(n_gmm,latent_dim))
+        self.register_buffer("cov", torch.zeros(n_gmm,latent_dim,latent_dim))
+        
+        
     
 if __name__=="__main__":
     '''
-    import ipdb
     from torchviz import make_dot    
     gmm_k = 4
     dagmm = DaGMM(gmm_k)
-    x = torch.randn(118,60)
+    x = torch.randn(118, 60)
     model = dagmm.encoder
     graph = make_dot(model(x), params=dict(model.named_parameters()))
     graph.view()

@@ -16,8 +16,8 @@ coloredlogs.install()
 
 if __name__=="__main__":
     skill = 3
-    anomaly_region = 1.0 # (s) observation located at the forward and backward region are marked as anomalies 
-    datasets_of_filtering_schemes_folder = '/home/birl_wu/baxter_ws/src/SPAI/smach_based_introspection_framework/introspection_data_folder.AC_offline_test/anomaly_detection_feature_selection_folder/'
+    anomaly_region = .5 # (s) observation located at the forward and backward region are marked as anomalies 
+    datasets_of_filtering_schemes_folder = '/home/birl_wu/baxter_ws/src/SPAI/smach_based_introspection_framework/introspection_data_folder.AC_offline_test/anomaly_detection_feature_selection_folder-18dims/'
     logger = logging.getLogger('GetDataOfSKill')
     logger.setLevel(logging.INFO)
     consoleHandler = logging.StreamHandler()
@@ -80,6 +80,12 @@ if __name__=="__main__":
     for mat, label in zip(list_of_mat, list_of_label):
         label = label.reshape(-1,1)
         data = np.hstack((mat, label)) if data is None else np.vstack((data, np.hstack((mat, label))))
+
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler(feature_range=(-1, 1)) # scaling the data into range(-1, 1)
+    scaledData  = scaler.fit_transform(data[:,:-1]) # ignore the label column
+    data[:,:-1] = scaledData      
+    
     np.save('kitting_exp_skill_%s'%skill, data)
     logger.warning("data with shape of ")
     logger.warning(data.shape)
