@@ -31,6 +31,11 @@ def main(config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
+
+    # for parameters for kitting experiment
+#    python main.py --batch_size 128 --mode train --data_path  
+    
+    
     # Model hyper-parameters
     parser.add_argument('--lr', type=float, default=1e-4)
 
