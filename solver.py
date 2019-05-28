@@ -254,14 +254,24 @@ class Solver(object):
         thresh = np.percentile(combined_energy, 100 - 20)
         print("Threshold :", thresh)
 
-        pred = (test_energy > thresh).astype(int)
+        if 'kdd' in self.data_path.lower():        
+            pred = (test_energy > thresh).astype(int) # high energy as anomalies
+        elif 'kitting' in self.data_path.lower():
+            pred = (test_energy < thresh).astype(int) # high energy as anomal, refer to the dataset definitation, 0: anomalies 1: normal            
+        else:
+            raise("something wrong on defining the threshold")
+        
         gt = test_labels.astype(int)
 
         from sklearn.metrics import precision_recall_fscore_support as prf, accuracy_score
+        from sklearn.metrics import confusion_matrix        
 
         accuracy = accuracy_score(gt,pred)
         precision, recall, f_score, support = prf(gt, pred, average='binary')
 
         print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f}".format(accuracy, precision, recall, f_score))
+        print 
+        TN, FP, FN, TP = confusion_matrix(gt, pred).ravel()
+        print("TN : {:0.4f}, FP : {:0.4f}, FN : {:0.4f}, TP : {:0.4f}".format(TN, FP, FN, TP))
         
         return accuracy, precision, recall, f_score
