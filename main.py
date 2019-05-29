@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Misc
     parser.add_argument('--mode', type=str, default='test', choices=['train', 'test'])
-    parser.add_argument('--use_tensorboard', type=str2bool, default=True)
+    parser.add_argument('--use_tensorboard', type=str2bool, default=False)
 
     # Path
     parser.add_argument('--data_path', type=str, default='kdd_cup.npz')

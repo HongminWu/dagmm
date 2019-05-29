@@ -137,7 +137,7 @@ class Solver(object):
 
                     IPython.display.clear_output()
                     print(log)
-
+                    
                     if self.use_tensorboard:
                         for tag, value in loss.items():
                             self.logger.scalar_summary(tag, value, e * iters_per_epoch + i + 1)
@@ -159,7 +159,9 @@ class Solver(object):
                                 plt.legend()
                                 plt_ctr += 1
 
-                        plt.show()
+                        plt.show(block=False)
+                        plt.pause(2)
+                        plt.close()
 
                     print("phi", self.dagmm.phi,"mu",self.dagmm.mu, "cov",self.dagmm.cov)
                 # Save model checkpoints
