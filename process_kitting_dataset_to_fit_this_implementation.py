@@ -16,7 +16,7 @@ coloredlogs.install()
 
 if __name__=="__main__":
     skill = 3
-    anomaly_region = .5 # (s) observation located at the forward and backward region are marked as anomalies 
+    anomaly_region = 1.0 # (s) observation located at the forward and backward region are marked as anomalies 
     datasets_of_filtering_schemes_folder = '/home/birl_wu/baxter_ws/src/SPAI/smach_based_introspection_framework/introspection_data_folder.AC_offline_test/anomaly_detection_feature_selection_folder-18dims/'
     logger = logging.getLogger('GetDataOfSKill')
     logger.setLevel(logging.INFO)
@@ -42,7 +42,7 @@ if __name__=="__main__":
         df = pd.read_csv(csv, sep=',')
         # Exclude 1st column which is time index
         mat = df.values[:, 1:]
-        label = np.ones(mat.shape[0]) # 1 represents the norminal
+        label = np.zeros(mat.shape[0]) # 0 represents the normal label
         list_of_mat.append(mat)
         list_of_label.append(label)
 
@@ -68,8 +68,8 @@ if __name__=="__main__":
         
         # Exclude 1st column which is time index
         mat = df.values[:, 1:]
-        label = np.ones(mat.shape[0])
-        label[anomalies_index[0]] = 0 # 0 represents the anomalies        
+        label = np.zeros(mat.shape[0])
+        label[anomalies_index[0]] = 1 # 1 represents the anomalies        
         list_of_mat.append(mat)
         list_of_label.append(label)
 
@@ -81,8 +81,9 @@ if __name__=="__main__":
         label = label.reshape(-1,1)
         data = np.hstack((mat, label)) if data is None else np.vstack((data, np.hstack((mat, label))))
 
-    from sklearn.preprocessing import MinMaxScaler
-    scaler = MinMaxScaler(feature_range=(-1, 1)) # scaling the data into range(-1, 1)
+    from sklearn.preprocessing import MinMaxScaler, StandardScaler
+    # scaler = MinMaxScaler(feature_range=(-1, 1)) # scaling the data into range(-1, 1)
+    scaler = StandardScaler()
     scaledData  = scaler.fit_transform(data[:,:-1]) # ignore the label column
     data[:,:-1] = scaledData      
     

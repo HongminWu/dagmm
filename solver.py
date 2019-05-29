@@ -9,6 +9,7 @@ from torch.autograd import grad
 from torch.autograd import Variable
 from model import *
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from utils import *
 from data_loader import *
 import IPython
@@ -251,27 +252,49 @@ class Solver(object):
         combined_energy = np.concatenate([train_energy, test_energy], axis=0)
         combined_labels = np.concatenate([train_labels, test_labels], axis=0)
 
-        thresh = np.percentile(combined_energy, 100 - 20)
+        thresh = np.percentile(combined_energy, 100-20)
         print("Threshold :", thresh)
-
-        if 'kdd' in self.data_path.lower():        
-            pred = (test_energy > thresh).astype(int) # high energy as anomalies
-        elif 'kitting' in self.data_path.lower():
-            pred = (test_energy < thresh).astype(int) # high energy as anomal, refer to the dataset definitation, 0: anomalies 1: normal            
-        else:
-            raise("something wrong on defining the threshold")
         
+        pred = (test_energy > thresh).astype(int) # high energy as anomalies
         gt = test_labels.astype(int)
 
         from sklearn.metrics import precision_recall_fscore_support as prf, accuracy_score
         from sklearn.metrics import confusion_matrix        
+        #NOTICE: In sklearn, default the 1 is positve class, and 0 is the negative class
 
         accuracy = accuracy_score(gt,pred)
-        precision, recall, f_score, support = prf(gt, pred, average='binary')
+        precision, recall, f_score, support = prf(gt, pred, average='binary', pos_label=1)
 
         print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f}".format(accuracy, precision, recall, f_score))
         print 
         TN, FP, FN, TP = confusion_matrix(gt, pred).ravel()
         print("TN : {:0.4f}, FP : {:0.4f}, FN : {:0.4f}, TP : {:0.4f}".format(TN, FP, FN, TP))
+
+        # plot-1
+        fig, axarr = plt.subplots(nrows=2, ncols=1)
+        # axarr[0].plot(combined_energy,  c = "gray", label="combined_energy")
+        axarr[0].scatter(range(combined_energy.shape[0]), combined_energy,  c = combined_labels.astype(int))        
+        axarr[0].axhline(thresh, c="red", label = 'threshold')
+        axarr[0].set_title('combined_energy')
+        axarr[0].legend()
+        
+        # axarr[1].plot(test_energy, c = 'gray', label='test_energy')
+        axarr[1].scatter(range(test_energy.shape[0]), test_energy,  c = test_labels.astype(int))                
+        axarr[1].axhline(thresh, c="red", label = 'threshold')
+        axarr[1].set_title('test_energy')        
+        axarr[1].legend()
+        fig.savefig("energy.png")
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(test_z[:,1],test_z[:,0], test_z[:,2], c=test_labels.astype(int))
+        ax.set_xlabel('Encoded')
+        ax.set_ylabel('Euclidean')
+        ax.set_zlabel('Cosine')
+        fig.savefig("latent_space.png")
+        plt.show()
         
         return accuracy, precision, recall, f_score
+    
+            
+            

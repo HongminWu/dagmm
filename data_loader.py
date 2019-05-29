@@ -71,12 +71,12 @@ class KittingExperimentLoader(object):
         labels = data[:,-1]
         features = data[:,:-1]
         N, D = features.shape 
-        normal_data = features[labels==1] # normal is lablled as 1 
-        normal_labels = labels[labels==1]
+        normal_data = features[labels==0] # normal is lablled as 0 
+        normal_labels = labels[labels==0]
 
 
-        anomaly_data = features[labels==0] # attack is lablled as 0
-        anomaly_labels = labels[labels==0]
+        anomaly_data = features[labels==1] # anomaly is lablled as 1
+        anomaly_labels = labels[labels==1]
 
         N_normal = normal_data.shape[0]
         
@@ -94,8 +94,10 @@ class KittingExperimentLoader(object):
 
         print 
         print("shape of train:{}, shape of test:{}".format(self.train.shape, self.test.shape))
-        print 
-        input("Press ENTER to continue!")
+        print
+        print("shape of normal_data:{}, shape of anomaly_data:{}".format(normal_data.shape, anomaly_data.shape))
+        print
+        # input("Press ENTER to continue!")
         
 
     def __len__(self):
